@@ -2,12 +2,11 @@ package com.gestaoclinica.controller;
 
 import com.gestaoclinica.model.Paciente;
 import com.gestaoclinica.service.PacienteService;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.*;  // @RestController vem daqui
 
 import java.util.List;
 
-@Controller
+@RestController  
 @RequestMapping("/pacientes")
 public class PacienteController {
 
