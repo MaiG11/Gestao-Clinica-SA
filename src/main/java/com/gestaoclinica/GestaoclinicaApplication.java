@@ -8,6 +8,8 @@ public class GestaoclinicaApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(GestaoclinicaApplication.class, args);
+		System.out.println("Aplicação de Gestão Clínica iniciada com sucesso!");
+		System.out.println("Acesse em: http://localhost:8080");
 	}
 
 }
