@@ -27,7 +27,10 @@ public class ConsultaService {
         if (consulta.getMedico() == null) {
             throw new RuntimeException("Médico é obrigatório");
         }
-
+        // NOVA REGRA OBRIGATÓRIA =Toda consulta é obrigada a informar se terá retorno ou não.
+        if (consulta.getRetornoNecessario() == null) {
+        throw new RuntimeException("Informe se a consulta possui retorno ou não");
+        }
         // Se tiver retorno = true, a data é obrigatória
         if (consulta.getRetornoNecessario() != null && consulta.getRetornoNecessario()
                 && consulta.getDataRetorno() == null) {

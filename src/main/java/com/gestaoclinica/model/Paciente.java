@@ -19,7 +19,7 @@ public class Paciente {
 
     private LocalDate dataNasc;
 
-    @Column(length = 20, unique = true)
+    @Column(nullable = false, unique = true, length = 20)
     private String cpf;
 
     @Column(length = 20)

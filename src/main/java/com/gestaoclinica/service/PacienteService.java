@@ -4,6 +4,7 @@ import com.gestaoclinica.model.Paciente;
 import com.gestaoclinica.repository.PacienteRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -18,6 +19,11 @@ public class PacienteService {
     // SALVAR COM REGRA
     public Paciente salvar(Paciente paciente) {
 
+        // Nome obrigatório
+        if (paciente.getNome() == null || paciente.getNome().isBlank()) {
+            throw new RuntimeException("Nome é obrigatório");
+        }
+
         // CPF obrigatório
         if (paciente.getCpf() == null || paciente.getCpf().isEmpty()) {
             throw new RuntimeException("CPF é obrigatório");
@@ -27,6 +33,9 @@ public class PacienteService {
         if (repository.findByCpf(paciente.getCpf()).isPresent()) {
             throw new RuntimeException("CPF já cadastrado");
         }
+
+        // Define data de cadastro automaticamente
+        paciente.setDataCadastro(LocalDate.now());
 
         return repository.save(paciente);
     }
@@ -52,4 +61,3 @@ public class PacienteService {
         repository.deleteAll();
     }
 }
-

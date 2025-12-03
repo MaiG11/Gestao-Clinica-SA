@@ -17,7 +17,7 @@ public class Medico {
     @Column(nullable = false, length = 150)
     private String nome;
 
-    @Column(length = 14, unique = true)
+    @Column(nullable = false, unique = true, length = 14)
     private String cpf;
 
     @Column(length = 100)

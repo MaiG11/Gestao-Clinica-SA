@@ -2,12 +2,11 @@ package com.gestaoclinica.controller;
 
 import com.gestaoclinica.model.Medico;
 import com.gestaoclinica.service.MedicoService;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/medicos")
 public class MedicoController {
 
@@ -35,8 +34,14 @@ public class MedicoController {
         return service.buscarPorId(id);
     }
 
+    // Buscar médicos por especialidade
+    @GetMapping("/especialidade/{especialidade}")
+    public List<Medico> buscarPorEspecialidade(@PathVariable String especialidade) {
+        return service.buscarPorEspecialidade(especialidade);
+    }
+
     // Excluir médico
-    @PostMapping("/excluir/{id}")
+    @DeleteMapping("/{id}")
     public void excluir(@PathVariable Long id) {
         service.excluirPorId(id);
     }

@@ -35,7 +35,7 @@ public class PacienteController {
     }
 
     // Excluir paciente por ID
-    @PostMapping("/excluir/{id}")
+    @DeleteMapping("/{id}")
     public void excluir(@PathVariable Long id) {
         service.excluirPorId(id);
     }

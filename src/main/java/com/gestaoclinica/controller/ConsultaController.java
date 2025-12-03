@@ -2,12 +2,11 @@ package com.gestaoclinica.controller;
 
 import com.gestaoclinica.model.Consulta;
 import com.gestaoclinica.service.ConsultaService;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/consultas")
 public class ConsultaController {
 
@@ -36,9 +35,10 @@ public class ConsultaController {
     }
 
     // Excluir consulta
-    @PostMapping("/excluir/{id}")
+    @DeleteMapping("/{id}")
     public void excluir(@PathVariable Long id) {
         service.excluirPorId(id);
+    
     }
 }
 
