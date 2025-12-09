@@ -1,4 +1,6 @@
-package com.gestaoclinica.exception;
+package com.gestaoclinica.exception.exceptionPaciente;
+
+import com.gestaoclinica.exception.RequestException;
 
 public class PacienteCampoObrigatorioException extends RequestException {
     public PacienteCampoObrigatorioException(String campo) {
