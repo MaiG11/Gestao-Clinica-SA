@@ -1,9 +1,8 @@
 package com.gestaoclinica.service;
 
-import com.gestaoclinica.exception.PacienteCampoObrigatorioException;
-import com.gestaoclinica.exception.PacienteCpfJaCadastradoException;
-import com.gestaoclinica.exception.PacienteNotFoundException;
-
+import com.gestaoclinica.exception.exceptionPaciente.PacienteCampoObrigatorioException;
+import com.gestaoclinica.exception.exceptionPaciente.PacienteCpfJaCadastradoException;
+import com.gestaoclinica.exception.exceptionPaciente.PacienteNotFoundException;
 import com.gestaoclinica.model.Paciente;
 import com.gestaoclinica.repository.PacienteRepository;
 import org.springframework.stereotype.Service;
