@@ -5,13 +5,19 @@ import com.gestaoclinica.exception.exceptionPaciente.PacienteCpfJaCadastradoExce
 import com.gestaoclinica.exception.exceptionPaciente.PacienteNotFoundException;
 import com.gestaoclinica.model.Paciente;
 import com.gestaoclinica.repository.PacienteRepository;
+
+
+import jakarta.persistence.GeneratedValue;
+
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
 
+
 @Service
 public class PacienteService {
+    
 
     private final PacienteRepository repository;
 
