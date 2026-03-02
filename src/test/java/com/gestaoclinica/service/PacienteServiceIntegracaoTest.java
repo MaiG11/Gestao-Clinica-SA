@@ -1,115 +1,151 @@
-package com.gestaoclinica.service;
+    package com.gestaoclinica.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+    import static org.junit.jupiter.api.Assertions.assertEquals;
+    import static org.junit.jupiter.api.Assertions.assertFalse;
+    import static org.junit.jupiter.api.Assertions.assertNotNull;
+    import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+    import java.util.List;
+    import org.junit.jupiter.api.DisplayName;
+    import org.junit.jupiter.api.Test;
+    import org.springframework.beans.factory.annotation.Autowired;
+    import org.springframework.boot.test.context.SpringBootTest;
+    import com.gestaoclinica.exception.exceptionPaciente.PacienteCampoObrigatorioException;
+    import com.gestaoclinica.exception.exceptionPaciente.PacienteCpfJaCadastradoException;
+    import com.gestaoclinica.exception.exceptionPaciente.PacienteNotFoundException;
+    import com.gestaoclinica.model.Paciente;
+    import com.gestaoclinica.repository.PacienteRepository;
+    import jakarta.transaction.Transactional;
 
-import com.gestaoclinica.exception.exceptionPaciente.PacienteCampoObrigatorioException;
-import com.gestaoclinica.exception.exceptionPaciente.PacienteCpfJaCadastradoException;
-import com.gestaoclinica.exception.exceptionPaciente.PacienteNotFoundException;
-import com.gestaoclinica.model.Paciente;
-import com.gestaoclinica.repository.PacienteRepository;
+    @SpringBootTest
+    @Transactional
 
-import jakarta.transaction.Transactional;
+    public class PacienteServiceIntegracaoTest {
 
-@SpringBootTest
-@Transactional
+        @Autowired
+        private PacienteService pacienteService;
 
-public class PacienteServiceIntegracaoTest {
+        @Autowired
+        private PacienteRepository pacienteRepository;
 
-    @Autowired
-    private PacienteService pacienteService;
+    @Test
+    @DisplayName("Salvamento de paciente com sucesso")
+    public void deveSalvarPacienteComSucesso(){
+        Paciente paciente = new Paciente();
+        paciente.setNome ("Wellington Braz");
+        paciente.setCpf("1234567899");
+        Paciente pacienteSalvo = pacienteService.salvar(paciente);
 
-    @Autowired
-    private PacienteRepository pacienteRepository;
+        assertNotNull(pacienteSalvo.getIdPaciente());
+        assertEquals("Wellington Braz", pacienteSalvo.getNome());
+        assertEquals("1234567899", pacienteSalvo.getCpf());
+        assertNotNull(pacienteSalvo.getDataCadastro());
 
-@Test
-@DisplayName("Deve salvar um paciente com sucesso")
-public void deveSalvarPacienteComSucesso(){
-    Paciente paciente = new Paciente();
-    paciente.setNome ("Wellington Braz");
-    paciente.setCpf("1234567899");
-    Paciente pacienteSalvo = pacienteService.salvar(paciente);
+    }
+    @Test
+    @DisplayName("Validação de paciente sem nome")
+    public void deveLancarExcecaoQuandoPacienteNaoTiverNome(){
+        Paciente paciente = new Paciente();
+        paciente.setCpf("1234567899");
 
-    assertNotNull(pacienteSalvo.getIdPaciente());
-    assertEquals("Wellington Braz", pacienteSalvo.getNome());
-    assertEquals("1234567899", pacienteSalvo.getCpf());
-    assertNotNull(pacienteSalvo.getDataCadastro());
+        Exception exception = assertThrows(PacienteCampoObrigatorioException.class, () -> {
+            pacienteService.salvar(paciente);});
 
-}
-@Test
-@DisplayName("Deve lançar exceção ao tentar salvar paciente sem nome")
-public void deveLancarExcecaoQuandoPacienteNaoTiverNome(){
-    Paciente paciente = new Paciente();
-    paciente.setCpf("1234567899");
+        assertEquals("O campo 'nome' é obrigatório", exception.getMessage());
 
-    Exception exception = assertThrows(PacienteCampoObrigatorioException.class, () -> {
-        pacienteService.salvar(paciente);});
+    }
+    @Test
+    @DisplayName("Validação de CPF vazio")
+    public void deveLancarExcecaoQuandoCpfForVazio() {
 
-    assertEquals("O campo 'nome' é obrigatório", exception.getMessage());
+        Paciente paciente = new Paciente();
+        paciente.setNome("Maira");
+        paciente.setCpf("");
 
-}
-@Test
-@DisplayName("Deve lançar exceção quando CPF for nulo")
- public void deveLancarExcecaoQuandoCpfForNulo() {
+        assertThrows(PacienteCampoObrigatorioException.class, () -> {
+            pacienteService.salvar(paciente);
+        });
 
-    Paciente paciente = new Paciente();
-    paciente.setNome("Maira");
-    paciente.setCpf(null);
+    }
+    @Test
+    @DisplayName("Validação de CPF nulo")
+    public void deveLancarExcecaoQuandoCpfForNulo() {
 
-    assertThrows(PacienteCampoObrigatorioException.class, () -> {
-        pacienteService.salvar(paciente);});
+        Paciente paciente = new Paciente();
+        paciente.setNome("Maira");
+        paciente.setCpf(null);
 
-}
-@Test
-@DisplayName("Deve lançar exceção quando CPF já estiver cadastrado")
- public void deveLancarExcecaoQuandoCpfJaExistir() {
+        assertThrows(PacienteCampoObrigatorioException.class, () -> {
+            pacienteService.salvar(paciente);
+        });
 
-    Paciente paciente1 = new Paciente();
-    paciente1.setNome("Maira");
-    paciente1.setCpf("12345678900");
+    }
+    @Test
+    @DisplayName("Validação de CPF duplicado")
+    public void deveLancarExcecaoQuandoCpfJaExistir() {
 
-    pacienteService.salvar(paciente1);
+        Paciente paciente1 = new Paciente();
+        paciente1.setNome("Maira");
+        paciente1.setCpf("12345678900");
 
-    Paciente paciente2 = new Paciente();
-    paciente2.setNome("João");
-    paciente2.setCpf("12345678900");
+        pacienteService.salvar(paciente1);
 
-    assertThrows(PacienteCpfJaCadastradoException.class, () -> {
-        pacienteService.salvar(paciente2);});
+        Paciente paciente2 = new Paciente();
+        paciente2.setNome("João");
+        paciente2.setCpf("12345678901");
 
-}
-@Test
-@DisplayName("Deve lançar exceção ao buscar paciente com id inexistente")
-public void deveLancarExcecaoQuandoIdNaoExistir() {
+        assertThrows(PacienteCpfJaCadastradoException.class, () -> {
+            pacienteService.salvar(paciente2);});
 
-    assertThrows(PacienteNotFoundException.class, () -> {
-        pacienteService.buscarPorId(999L);});
-        
-}
-@Test
-@DisplayName("Deve excluir paciente quando id existir")
-void deveExcluirPacienteQuandoIdExistir() {
+    }
+    @Test
+    @DisplayName("Paciente não encontrado por id")
+    public void deveLancarExcecaoQuandoIdNaoExistir() {
 
-    Paciente paciente = new Paciente();
-    paciente.setNome("Maira");
-    paciente.setCpf("12345678900");
+        assertThrows(PacienteNotFoundException.class, () -> {
+            pacienteService.buscarPorId(999L);});
+            
+    }
+    @Test
+    @DisplayName("Exclusão de paciente por id")
+    void deveExcluirPacienteQuandoIdExistir() {
 
-    Paciente salvo = pacienteService.salvar(paciente);
+        Paciente paciente = new Paciente();
+        paciente.setNome("Maira");
+        paciente.setCpf("12345678900");
 
-    assertNotNull(salvo);
-    assertNotNull(salvo.getId());
+        Paciente salvo = pacienteService.salvar(paciente);
 
-    Long id = salvo.getId();
+        assertNotNull(salvo);
+        assertNotNull(salvo.getIdPaciente());
 
-    pacienteService.excluirPorId(id);
+        Long id = salvo.getIdPaciente();
 
-    assertFalse(pacienteRepository.existsById(id));
-}
-}
+        pacienteService.excluirPorId(id);
+
+        assertFalse(pacienteRepository.existsById(id));
+    }
+    @Test
+    @DisplayName("Busca de pacientes cadastrados")
+    void deveListarTodosOsPacientes() {
+
+        // Arrange (organizar)
+        Paciente paciente1 = new Paciente();
+        paciente1.setNome("Maira");
+        paciente1.setCpf("12345678900");
+
+        Paciente paciente2 = new Paciente();
+        paciente2.setNome("João");
+        paciente2.setCpf("12345678901");
+
+        pacienteService.salvar(paciente1);
+        pacienteService.salvar(paciente2);
+
+        // Act (executar)
+        List<Paciente> lista = pacienteService.listar();
+
+        // Assert (validar)
+        assertNotNull(lista);
+        assertEquals(2, lista.size());
+    }
+    }

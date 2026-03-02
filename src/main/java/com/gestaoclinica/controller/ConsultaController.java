@@ -3,7 +3,6 @@ package com.gestaoclinica.controller;
 import com.gestaoclinica.model.Consulta;
 import com.gestaoclinica.service.ConsultaService;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
