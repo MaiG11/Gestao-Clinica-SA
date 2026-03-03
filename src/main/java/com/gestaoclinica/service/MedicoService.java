@@ -1,5 +1,10 @@
 package com.gestaoclinica.service;
 
+import com.gestaoclinica.exception.exception_medico.MedicoCampoObrigatorioException;
+import com.gestaoclinica.exception.exception_medico.MedicoCpfJaCadastradoException;
+import com.gestaoclinica.exception.exception_medico.MedicoCrmJaCadastradoException;
+import com.gestaoclinica.exception.exception_medico.MedicoEspecialidadeNaoEncontradaException;
+import com.gestaoclinica.exception.exception_medico.MedicoNotFoundException;
 import com.gestaoclinica.model.Medico;
 import com.gestaoclinica.repository.MedicoRepository;
 import org.springframework.stereotype.Service;
@@ -17,43 +22,40 @@ public class MedicoService {
     }
 
     // SALVAR COM TODAS AS REGRAS DE NEGÓCIO
-    public Medico salvar(Medico medico) {
+  public Medico salvar(Medico medico) {
 
-        // Nome obrigatório
-        if (medico.getNome() == null || medico.getNome().isEmpty()) {
-            throw new RuntimeException("Nome é obrigatório");
-        }
-
-        // CPF obrigatório
-        if (medico.getCpf() == null || medico.getCpf().isEmpty()) {
-            throw new RuntimeException("CPF é obrigatório");
-        }
-
-        // CPF não pode repetir
-        if (repository.findByCpf(medico.getCpf()).isPresent()) {
-            throw new RuntimeException("CPF já cadastrado");
-        }
-
-        // CRM obrigatório
-        if (medico.getCrm() == null || medico.getCrm().isEmpty()) {
-            throw new RuntimeException("CRM é obrigatório");
-        }
-
-        // CRM não pode repetir
-        if (repository.findByCrm(medico.getCrm()).isPresent()) {
-            throw new RuntimeException("CRM já cadastrado");
-        }
-
-        // Especialidade obrigatória
-        if (medico.getEspecialidade() == null || medico.getEspecialidade().isEmpty()) {
-            throw new RuntimeException("Especialidade é obrigatória");
-        }
-
-        // Data de admissão automática
-        medico.setDataAdmissao(LocalDate.now());
-
-        return repository.save(medico);
+    if (medico == null) {
+        throw new IllegalArgumentException("Médico não pode ser nulo.");
     }
+
+    if (medico.getNome() == null || medico.getNome().isBlank()) {
+        throw new MedicoCampoObrigatorioException("nome");
+    }
+
+    if (medico.getCpf() == null || medico.getCpf().isBlank()) {
+        throw new MedicoCampoObrigatorioException("cpf");
+    }
+
+    if (repository.findByCpf(medico.getCpf()).isPresent()) {
+        throw new MedicoCpfJaCadastradoException(medico.getCpf());
+    }
+
+    if (medico.getCrm() == null || medico.getCrm().isBlank()) {
+        throw new MedicoCampoObrigatorioException("crm");
+    }
+
+    if (repository.findByCrm(medico.getCrm()).isPresent()) {
+        throw new MedicoCrmJaCadastradoException(medico.getCrm());
+    }
+
+    if (medico.getEspecialidade() == null || medico.getEspecialidade().isBlank()) {
+        throw new MedicoCampoObrigatorioException("especialidade");
+    }
+
+    medico.setDataAdmissao(LocalDate.now());
+
+    return repository.save(medico);
+}
 
     // LISTAR TODOS
     public List<Medico> listar() {
@@ -63,21 +65,32 @@ public class MedicoService {
     // BUSCAR POR ID
     public Medico buscarPorId(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Médico não encontrado"));
+                .orElseThrow(() -> new MedicoNotFoundException(id));
     }
 
     // BUSCAR POR ESPECIALIDADE
     public List<Medico> buscarPorEspecialidade(String especialidade) {
-        return repository.findByEspecialidade(especialidade);
+
+        if (especialidade == null || especialidade.isBlank()) {
+            throw new MedicoCampoObrigatorioException("especialidade");
+        }
+
+        List<Medico> lista = repository.findByEspecialidade(especialidade);
+
+        if (lista.isEmpty()) {
+            throw new MedicoEspecialidadeNaoEncontradaException(especialidade);
+        }
+
+        return lista;
     }
 
     // EXCLUIR POR ID
     public void excluirPorId(Long id) {
-        repository.deleteById(id);
-    }
 
-    // EXCLUIR TODOS
-    public void excluirTodos() {
-        repository.deleteAll();
+        if (!repository.existsById(id)) {
+            throw new MedicoNotFoundException(id);
+        }
+
+        repository.deleteById(id);
     }
 }

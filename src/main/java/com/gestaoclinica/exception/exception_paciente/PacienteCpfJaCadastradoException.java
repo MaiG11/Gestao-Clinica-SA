@@ -1,4 +1,4 @@
-package com.gestaoclinica.exception.exceptionPaciente;
+package com.gestaoclinica.exception.exception_paciente;
 
 public class PacienteCpfJaCadastradoException extends RuntimeException {
 

@@ -1,4 +1,4 @@
-package com.gestaoclinica.exception.exceptionPaciente;
+package com.gestaoclinica.exception.exception_paciente;
 
 import com.gestaoclinica.exception.RequestException;
 

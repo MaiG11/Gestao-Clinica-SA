@@ -1,9 +1,14 @@
 package com.gestaoclinica.service;
 
+import com.gestaoclinica.exception.exception_consulta.ConsultaCampoObrigatorioException;
+import com.gestaoclinica.exception.exception_consulta.ConsultaDataInvalidaException;
+import com.gestaoclinica.exception.exception_consulta.ConsultaHorarioIndisponivelException;
+import com.gestaoclinica.exception.exception_consulta.ConsultaNotFoundException;
 import com.gestaoclinica.model.Consulta;
 import com.gestaoclinica.repository.ConsultaRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -15,48 +20,65 @@ public class ConsultaService {
         this.repository = repository;
     }
 
-    // SALVAR COM REGRA
     public Consulta salvar(Consulta consulta) {
 
-        // Não permite salvar sem paciente
         if (consulta.getPaciente() == null) {
-            throw new RuntimeException("Paciente é obrigatório");
+            throw new ConsultaCampoObrigatorioException("paciente");
         }
 
-        // Não permite salvar sem médico
         if (consulta.getMedico() == null) {
-            throw new RuntimeException("Médico é obrigatório");
+            throw new ConsultaCampoObrigatorioException("medico");
         }
-        // NOVA REGRA OBRIGATÓRIA =Toda consulta é obrigada a informar se terá retorno ou não.
+
+        if (consulta.getDataConsulta() == null) {
+            throw new ConsultaCampoObrigatorioException("dataConsulta");
+        }
+
+        if (consulta.getHorario() == null) {
+            throw new ConsultaCampoObrigatorioException("horario");
+        }
+
+        //  Não permitir data passada
+        if (consulta.getDataConsulta().isBefore(LocalDate.now())) {
+            throw new ConsultaDataInvalidaException();
+}
         if (consulta.getRetornoNecessario() == null) {
-        throw new RuntimeException("Informe se a consulta possui retorno ou não");
+            throw new ConsultaCampoObrigatorioException("retornoNecessario");
         }
-        // Se tiver retorno = true, a data é obrigatória
-        if (consulta.getRetornoNecessario() != null && consulta.getRetornoNecessario()
+
+        if (consulta.getRetornoNecessario()
                 && consulta.getDataRetorno() == null) {
-            throw new RuntimeException("Data de retorno é obrigatória");
+            throw new ConsultaCampoObrigatorioException("dataRetorno");
+        }
+
+        //  Verifica conflito de horário do médico
+        if (repository.existsByMedicoAndDataConsultaAndHorario(
+                consulta.getMedico(),
+                consulta.getDataConsulta(),
+                consulta.getHorario())) {
+
+            throw new ConsultaHorarioIndisponivelException();
         }
 
         return repository.save(consulta);
     }
 
-    // LISTAR TODOS
     public List<Consulta> listar() {
         return repository.findAll();
     }
 
-    // BUSCAR POR ID
     public Consulta buscarPorId(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Consulta não encontrada"));
+                .orElseThrow(() -> new ConsultaNotFoundException(id));
     }
 
-    // EXCLUIR POR ID
     public void excluirPorId(Long id) {
+        if (!repository.existsById(id)) {
+            throw new ConsultaNotFoundException(id);
+        }
         repository.deleteById(id);
     }
 
-    // EXCLUIR TODOS
     public void excluirTodos() {
         repository.deleteAll();
     }
