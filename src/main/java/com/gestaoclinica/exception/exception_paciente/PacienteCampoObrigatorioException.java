@@ -1,9 +1,8 @@
 package com.gestaoclinica.exception.exception_paciente;
 
-import com.gestaoclinica.exception.RequestException;
+public class PacienteCampoObrigatorioException extends RuntimeException {
 
-public class PacienteCampoObrigatorioException extends RequestException {
     public PacienteCampoObrigatorioException(String campo) {
-        super("CampoObrigatorio", "O campo '" + campo + "' é obrigatório");
+        super("O campo " + campo + " é obrigatório.");
     }
 }
