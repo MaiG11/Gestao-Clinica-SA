@@ -1,5 +1,15 @@
 package com.gestaoclinica.dto;
 
-public class MedicoRequestDTO {
-    
-}
+import java.time.LocalDate;
+
+public record MedicoRequestDTO(
+
+        String nome,
+        String cpf,
+        String especialidade,
+        String telefone,
+        String email,
+        String crm,
+        LocalDate dataAdmissao
+
+) {}

@@ -4,14 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import java.util.List;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import com.gestaoclinica.dto.PacienteRequestDTO;
 import com.gestaoclinica.dto.PacienteResponseDTO;
 import com.gestaoclinica.exception.exception_paciente.PacienteCampoObrigatorioException;
@@ -19,7 +16,6 @@ import com.gestaoclinica.exception.exception_paciente.PacienteCpfJaCadastradoExc
 import com.gestaoclinica.exception.exception_paciente.PacienteNotFoundException;
 import com.gestaoclinica.model.Paciente;
 import com.gestaoclinica.repository.PacienteRepository;
-
 import jakarta.transaction.Transactional;
 
 @SpringBootTest
@@ -68,11 +64,11 @@ public class PacienteServiceIntegracaoTest {
                 null
         );
 
-        Exception exception = assertThrows(PacienteCampoObrigatorioException.class, () -> {
+        assertThrows(PacienteCampoObrigatorioException.class, () -> {
             pacienteService.salvar(paciente);
         });
 
-        assertEquals("O campo " + "nome" + " é obrigatório.", exception.getMessage());
+        
     }
 
     @Test

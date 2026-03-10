@@ -1,7 +1,10 @@
 package com.gestaoclinica.controller;
 
+import com.gestaoclinica.dto.MedicoRequestDTO;
+import com.gestaoclinica.dto.MedicoResponseDTO;
 import com.gestaoclinica.model.Medico;
 import com.gestaoclinica.service.MedicoService;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,7 +27,7 @@ public class MedicoController {
 
     // Salvar médico
     @PostMapping
-    public Medico salvar(@RequestBody Medico medico) {
+    public MedicoResponseDTO salvar(@RequestBody MedicoRequestDTO medico) {
         return service.salvar(medico);
     }
 

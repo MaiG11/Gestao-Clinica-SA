@@ -1,5 +1,7 @@
 package com.gestaoclinica.service;
 
+import com.gestaoclinica.dto.MedicoRequestDTO;
+import com.gestaoclinica.dto.MedicoResponseDTO;
 import com.gestaoclinica.exception.exception_medico.MedicoCampoObrigatorioException;
 import com.gestaoclinica.exception.exception_medico.MedicoCpfJaCadastradoException;
 import com.gestaoclinica.exception.exception_medico.MedicoCrmJaCadastradoException;
@@ -7,6 +9,7 @@ import com.gestaoclinica.exception.exception_medico.MedicoEspecialidadeNaoEncont
 import com.gestaoclinica.exception.exception_medico.MedicoNotFoundException;
 import com.gestaoclinica.model.Medico;
 import com.gestaoclinica.repository.MedicoRepository;
+
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -21,41 +24,61 @@ public class MedicoService {
         this.repository = repository;
     }
 
-    // SALVAR COM TODAS AS REGRAS DE NEGÓCIO
-  public Medico salvar(Medico medico) {
+    // SALVAR MÉDICO
+    public MedicoResponseDTO salvar(MedicoRequestDTO dadosMedico) {
 
-    if (medico == null) {
-        throw new IllegalArgumentException("Médico não pode ser nulo.");
+        if (dadosMedico == null) {
+            throw new IllegalArgumentException("Médico não pode ser nulo.");
+        }
+
+        if (dadosMedico.nome() == null || dadosMedico.nome().isBlank()) {
+            throw new MedicoCampoObrigatorioException("nome");
+        }
+
+        if (dadosMedico.cpf() == null || dadosMedico.cpf().isBlank()) {
+            throw new MedicoCampoObrigatorioException("cpf");
+        }
+
+        if (repository.findByCpf(dadosMedico.cpf()).isPresent()) {
+            throw new MedicoCpfJaCadastradoException(dadosMedico.cpf());
+        }
+
+        if (dadosMedico.crm() == null || dadosMedico.crm().isBlank()) {
+            throw new MedicoCampoObrigatorioException("crm");
+        }
+
+        if (repository.findByCrm(dadosMedico.crm()).isPresent()) {
+            throw new MedicoCrmJaCadastradoException(dadosMedico.crm());
+        }
+
+        if (dadosMedico.especialidade() == null || dadosMedico.especialidade().isBlank()) {
+            throw new MedicoCampoObrigatorioException("especialidade");
+        }
+
+        Medico medico = new Medico();
+
+        medico.setNome(dadosMedico.nome());
+        medico.setCpf(dadosMedico.cpf());
+        medico.setEspecialidade(dadosMedico.especialidade());
+        medico.setTelefone(dadosMedico.telefone());
+        medico.setEmail(dadosMedico.email());
+        medico.setCrm(dadosMedico.crm());
+
+        medico.setDataAdmissao(LocalDate.now());
+
+        Medico medicoSalvo = repository.save(medico);
+
+        return new MedicoResponseDTO(
+                medicoSalvo.getIdMedico(),
+                medicoSalvo.getNome(),
+                medicoSalvo.getCpf(),
+                medicoSalvo.getEspecialidade(),
+                medicoSalvo.getTelefone(),
+                medicoSalvo.getEmail(),
+                medicoSalvo.getCrm(),
+                medicoSalvo.getDataAdmissao()
+        );
     }
-
-    if (medico.getNome() == null || medico.getNome().isBlank()) {
-        throw new MedicoCampoObrigatorioException("nome");
-    }
-
-    if (medico.getCpf() == null || medico.getCpf().isBlank()) {
-        throw new MedicoCampoObrigatorioException("cpf");
-    }
-
-    if (repository.findByCpf(medico.getCpf()).isPresent()) {
-        throw new MedicoCpfJaCadastradoException(medico.getCpf());
-    }
-
-    if (medico.getCrm() == null || medico.getCrm().isBlank()) {
-        throw new MedicoCampoObrigatorioException("crm");
-    }
-
-    if (repository.findByCrm(medico.getCrm()).isPresent()) {
-        throw new MedicoCrmJaCadastradoException(medico.getCrm());
-    }
-
-    if (medico.getEspecialidade() == null || medico.getEspecialidade().isBlank()) {
-        throw new MedicoCampoObrigatorioException("especialidade");
-    }
-
-    medico.setDataAdmissao(LocalDate.now());
-
-    return repository.save(medico);
-}
 
     // LISTAR TODOS
     public List<Medico> listar() {
@@ -84,7 +107,7 @@ public class MedicoService {
         return lista;
     }
 
-    // EXCLUIR POR ID
+    // EXCLUIR
     public void excluirPorId(Long id) {
 
         if (!repository.existsById(id)) {
