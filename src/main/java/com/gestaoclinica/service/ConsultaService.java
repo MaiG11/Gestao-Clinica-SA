@@ -1,11 +1,19 @@
 package com.gestaoclinica.service;
 
+import com.gestaoclinica.dto.ConsultaRequestDTO;
+import com.gestaoclinica.dto.ConsultaResponseDTO;
 import com.gestaoclinica.exception.exception_consulta.ConsultaCampoObrigatorioException;
 import com.gestaoclinica.exception.exception_consulta.ConsultaDataInvalidaException;
 import com.gestaoclinica.exception.exception_consulta.ConsultaHorarioIndisponivelException;
 import com.gestaoclinica.exception.exception_consulta.ConsultaNotFoundException;
+import com.gestaoclinica.exception.exception_medico.MedicoNotFoundException;
+import com.gestaoclinica.exception.exception_paciente.PacienteNotFoundException;
 import com.gestaoclinica.model.Consulta;
+import com.gestaoclinica.model.Medico;
+import com.gestaoclinica.model.Paciente;
 import com.gestaoclinica.repository.ConsultaRepository;
+import com.gestaoclinica.repository.MedicoRepository;
+import com.gestaoclinica.repository.PacienteRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -14,72 +22,108 @@ import java.util.List;
 @Service
 public class ConsultaService {
 
-    private final ConsultaRepository repository;
+    private final ConsultaRepository consultaRepository;
+    private final PacienteRepository pacienteRepository;
+    private final MedicoRepository medicoRepository;
 
-    public ConsultaService(ConsultaRepository repository) {
-        this.repository = repository;
+    public ConsultaService(ConsultaRepository consultaRepository, PacienteRepository pacienteRepository, MedicoRepository medicoRepository) {
+        this.consultaRepository = consultaRepository;
+        this.pacienteRepository = pacienteRepository;
+        this.medicoRepository = medicoRepository;
     }
 
-    public Consulta salvar(Consulta consulta) {
+    // Salvar nova consulta
+    public ConsultaResponseDTO salvar(ConsultaRequestDTO dto) {
 
-        if (consulta.getPaciente() == null) {
-            throw new ConsultaCampoObrigatorioException("paciente");
-        }
+        if (dto.pacienteId() == null) throw new ConsultaCampoObrigatorioException("pacienteId");
+        if (dto.medicoId() == null) throw new ConsultaCampoObrigatorioException("medicoId");
+        if (dto.dataConsulta() == null) throw new ConsultaCampoObrigatorioException("dataConsulta");
+        if (dto.horario() == null) throw new ConsultaCampoObrigatorioException("horario");
+        if (dto.dataConsulta().isBefore(LocalDate.now())) throw new ConsultaDataInvalidaException();
+        if (dto.retornoNecessario() == null) throw new ConsultaCampoObrigatorioException("retornoNecessario");
+        if (dto.retornoNecessario() && dto.dataRetorno() == null) throw new ConsultaCampoObrigatorioException("dataRetorno");
 
-        if (consulta.getMedico() == null) {
-            throw new ConsultaCampoObrigatorioException("medico");
-        }
+        Paciente paciente = pacienteRepository.findById(dto.pacienteId())
+                .orElseThrow(() -> new PacienteNotFoundException(dto.pacienteId()));
 
-        if (consulta.getDataConsulta() == null) {
-            throw new ConsultaCampoObrigatorioException("dataConsulta");
-        }
+        Medico medico = medicoRepository.findById(dto.medicoId())
+                .orElseThrow(() -> new MedicoNotFoundException(dto.medicoId()));
 
-        if (consulta.getHorario() == null) {
-            throw new ConsultaCampoObrigatorioException("horario");
-        }
-
-        //  Não permitir data passada
-        if (consulta.getDataConsulta().isBefore(LocalDate.now())) {
-            throw new ConsultaDataInvalidaException();
-}
-        if (consulta.getRetornoNecessario() == null) {
-            throw new ConsultaCampoObrigatorioException("retornoNecessario");
-        }
-
-        if (consulta.getRetornoNecessario()
-                && consulta.getDataRetorno() == null) {
-            throw new ConsultaCampoObrigatorioException("dataRetorno");
-        }
-
-        //  Verifica conflito de horário do médico
-        if (repository.existsByMedicoAndDataConsultaAndHorario(
-                consulta.getMedico(),
-                consulta.getDataConsulta(),
-                consulta.getHorario())) {
-
+        if (consultaRepository.existsByMedicoAndDataConsultaAndHorario(medico, dto.dataConsulta(), dto.horario()))
             throw new ConsultaHorarioIndisponivelException();
-        }
 
-        return repository.save(consulta);
+        Consulta consulta = new Consulta();
+        consulta.setPaciente(paciente);
+        consulta.setMedico(medico);
+        consulta.setDataConsulta(dto.dataConsulta());
+        consulta.setHorario(dto.horario());
+        consulta.setStatus(dto.status());
+        consulta.setTipoConsulta(dto.tipoConsulta());
+        consulta.setSintomas(dto.sintomas());
+        consulta.setDiagnostico(dto.diagnostico());
+        consulta.setMedicacaoPrescrita(dto.medicacaoPrescrita());
+        consulta.setRetornoNecessario(dto.retornoNecessario());
+        consulta.setDataRetorno(dto.dataRetorno());
+        consulta.setAlergiasRelevantes(dto.alergiasRelevantes());
+        consulta.setObservacoes(dto.observacoes());
+
+        Consulta consultaSalva = consultaRepository.save(consulta);
+
+        return converterEntidadeParaDTO(consultaSalva);
     }
 
-    public List<Consulta> listar() {
-        return repository.findAll();
+    // Listar todas as consultas como DTO
+    public List<ConsultaResponseDTO> listar() {
+        return consultaRepository.findAll().stream()
+                .map(this::converterEntidadeParaDTO)
+                .toList();
     }
 
+    // Buscar consulta por ID como DTO
+    public ConsultaResponseDTO buscarPorIdDTO(Long id) {
+        Consulta consulta = consultaRepository.findById(id)
+                .orElseThrow(() -> new ConsultaNotFoundException(id));
+        return converterEntidadeParaDTO(consulta);
+    }
+
+    // Buscar consulta por ID (entidade), usado internamente se necessário
     public Consulta buscarPorId(Long id) {
-        return repository.findById(id)
+        return consultaRepository.findById(id)
                 .orElseThrow(() -> new ConsultaNotFoundException(id));
     }
 
+    // Excluir consulta por ID
     public void excluirPorId(Long id) {
-        if (!repository.existsById(id)) {
+        if (!consultaRepository.existsById(id)) {
             throw new ConsultaNotFoundException(id);
         }
-        repository.deleteById(id);
+        consultaRepository.deleteById(id);
     }
 
+    // Excluir todas as consultas
     public void excluirTodos() {
-        repository.deleteAll();
+        consultaRepository.deleteAll();
+    }
+
+    // Método privado para mapear Consulta → ConsultaResponseDTO
+    private ConsultaResponseDTO converterEntidadeParaDTO(Consulta consulta) {
+        return new ConsultaResponseDTO(
+                consulta.getIdConsulta(),
+                consulta.getDataConsulta(),
+                consulta.getHorario(),
+                consulta.getPaciente().getIdPaciente(),
+                consulta.getPaciente().getNome(),
+                consulta.getMedico().getIdMedico(),
+                consulta.getMedico().getNome(),
+                consulta.getStatus(),
+                consulta.getTipoConsulta(),
+                consulta.getSintomas(),
+                consulta.getDiagnostico(),
+                consulta.getMedicacaoPrescrita(),
+                consulta.getRetornoNecessario(),
+                consulta.getDataRetorno(),
+                consulta.getAlergiasRelevantes(),
+                consulta.getObservacoes()
+        );
     }
 }

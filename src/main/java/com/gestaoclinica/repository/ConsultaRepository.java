@@ -14,6 +14,9 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
     // Buscar consultas por paciente
     List<Consulta> findByPaciente(Paciente paciente);
 
+    // Buscar consultas por médico
+    List<Consulta> findByMedico(Medico medico);
+
     // Buscar consultas por status
     List<Consulta> findByStatus(String status);
 
