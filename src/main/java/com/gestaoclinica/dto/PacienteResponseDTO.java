@@ -1,5 +1,17 @@
 package com.gestaoclinica.dto;
 
-public class PacienteResponseDTO {
-    
-}
+import java.time.LocalDate;
+
+public record PacienteResponseDTO(
+
+    Long idPaciente,
+    String nome,
+    LocalDate dataNasc,
+    String cpf,
+    String telefone,
+    String endereco,
+    String sexo,
+    LocalDate dataCadastro,
+    String email
+
+) {}

@@ -1,12 +1,14 @@
 package com.gestaoclinica.controller;
 
+import com.gestaoclinica.dto.PacienteRequestDTO;
+import com.gestaoclinica.dto.PacienteResponseDTO;
 import com.gestaoclinica.model.Paciente;
 import com.gestaoclinica.service.PacienteService;
-import org.springframework.web.bind.annotation.*;  // @RestController vem daqui
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController  
+@RestController
 @RequestMapping("/pacientes")
 public class PacienteController {
 
@@ -24,8 +26,8 @@ public class PacienteController {
 
     // Salvar paciente
     @PostMapping
-    public Paciente salvar(@RequestBody Paciente paciente) {
-        return service.salvar(paciente);
+    public PacienteResponseDTO salvar(@RequestBody PacienteRequestDTO dadosPaciente) {
+        return service.salvar(dadosPaciente);
     }
 
     // Buscar paciente por ID
