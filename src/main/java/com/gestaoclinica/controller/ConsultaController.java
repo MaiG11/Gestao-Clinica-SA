@@ -3,6 +3,8 @@ package com.gestaoclinica.controller;
 import com.gestaoclinica.dto.ConsultaRequestDTO;
 import com.gestaoclinica.dto.ConsultaResponseDTO;
 import com.gestaoclinica.service.ConsultaService;
+
+import jakarta.validation.Valid; // Necessário para validar DTO
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,7 +15,6 @@ public class ConsultaController {
 
     private final ConsultaService service;
 
-    // Construtor para injetar o service
     public ConsultaController(ConsultaService service) {
         this.service = service;
     }
@@ -21,21 +22,18 @@ public class ConsultaController {
     // Listar todas as consultas
     @GetMapping
     public List<ConsultaResponseDTO> listar() {
-        // Service já retorna a lista de DTOs, controller só repassa
         return service.listar();
     }
 
-    // Salvar nova consulta
+    // Salvar nova consulta com validação
     @PostMapping
-    public ConsultaResponseDTO salvar(@RequestBody ConsultaRequestDTO dto) {
-        // Recebe o DTO de requisição e retorna o DTO de resposta
+    public ConsultaResponseDTO salvar(@Valid @RequestBody ConsultaRequestDTO dto) {
         return service.salvar(dto);
     }
 
     // Buscar consulta por ID
     @GetMapping("/{id}")
     public ConsultaResponseDTO buscar(@PathVariable Long id) {
-        // Service retorna a entidade, transformamos em DTO
         var consulta = service.buscarPorId(id);
         return new ConsultaResponseDTO(
                 consulta.getIdConsulta(),
@@ -57,7 +55,7 @@ public class ConsultaController {
         );
     }
 
-    // Excluir consulta por ID
+    // Excluir consulta
     @DeleteMapping("/{id}")
     public void excluir(@PathVariable Long id) {
         service.excluirPorId(id);
