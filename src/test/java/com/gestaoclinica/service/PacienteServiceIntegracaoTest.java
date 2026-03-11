@@ -9,6 +9,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+
 import com.gestaoclinica.dto.PacienteRequestDTO;
 import com.gestaoclinica.dto.PacienteResponseDTO;
 import com.gestaoclinica.exception.exception_paciente.PacienteCampoObrigatorioException;
@@ -19,6 +21,7 @@ import com.gestaoclinica.repository.PacienteRepository;
 import jakarta.transaction.Transactional;
 
 @SpringBootTest
+@ActiveProfiles("test")
 @Transactional
 public class PacienteServiceIntegracaoTest {
 
