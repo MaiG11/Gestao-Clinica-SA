@@ -74,9 +74,7 @@ public class ConsultaService {
 
     // Listar todas as consultas como DTO
     public List<ConsultaResponseDTO> listar() {
-        return consultaRepository.findAll().stream()
-                .map(this::converterEntidadeParaDTO)
-                .toList();
+        return List.of();
     }
 
     // Buscar consulta por ID como DTO

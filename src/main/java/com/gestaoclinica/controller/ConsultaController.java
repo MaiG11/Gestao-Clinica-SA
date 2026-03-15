@@ -4,7 +4,7 @@ import com.gestaoclinica.dto.ConsultaRequestDTO;
 import com.gestaoclinica.dto.ConsultaResponseDTO;
 import com.gestaoclinica.service.ConsultaService;
 
-import jakarta.validation.Valid; // Necessário para validar DTO
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,7 +25,7 @@ public class ConsultaController {
         return service.listar();
     }
 
-    // Salvar nova consulta com validação
+    // Salvar nova consulta
     @PostMapping
     public ConsultaResponseDTO salvar(@Valid @RequestBody ConsultaRequestDTO dto) {
         return service.salvar(dto);
@@ -34,25 +34,7 @@ public class ConsultaController {
     // Buscar consulta por ID
     @GetMapping("/{id}")
     public ConsultaResponseDTO buscar(@PathVariable Long id) {
-        var consulta = service.buscarPorId(id);
-        return new ConsultaResponseDTO(
-                consulta.getIdConsulta(),
-                consulta.getDataConsulta(),
-                consulta.getHorario(),
-                consulta.getPaciente().getIdPaciente(),
-                consulta.getPaciente().getNome(),
-                consulta.getMedico().getIdMedico(),
-                consulta.getMedico().getNome(),
-                consulta.getStatus(),
-                consulta.getTipoConsulta(),
-                consulta.getSintomas(),
-                consulta.getDiagnostico(),
-                consulta.getMedicacaoPrescrita(),
-                consulta.getRetornoNecessario(),
-                consulta.getDataRetorno(),
-                consulta.getAlergiasRelevantes(),
-                consulta.getObservacoes()
-        );
+        return service.buscarPorIdDTO(id);
     }
 
     // Excluir consulta
