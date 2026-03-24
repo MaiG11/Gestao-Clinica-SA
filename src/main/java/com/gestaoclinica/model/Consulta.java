@@ -5,6 +5,7 @@ import java.time.LocalTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,12 +24,12 @@ public class Consulta {
     private LocalTime horario;
 
     // ---------------- RELACIONAMENTO PACIENTE ----------------
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_paciente")
     private Paciente paciente;
 
     // ---------------- RELACIONAMENTO MEDICO ------------------
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_medico")
     private Medico medico;
 

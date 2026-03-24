@@ -4,10 +4,12 @@ import com.gestaoclinica.model.Consulta;
 import com.gestaoclinica.model.Medico;
 import com.gestaoclinica.model.Paciente;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+
 
 public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 
@@ -26,4 +28,6 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
             LocalDate dataConsulta,
             LocalTime horario
     );
+    @Query("SELECT c FROM Consulta c JOIN FETCH c.medico WHERE c.paciente.idPaciente = :idPaciente")
+List<Consulta> buscarPorPacienteId(Long idPaciente);
 }

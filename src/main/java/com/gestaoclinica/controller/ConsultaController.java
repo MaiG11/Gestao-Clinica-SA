@@ -7,6 +7,7 @@ import com.gestaoclinica.service.ConsultaService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
+
 import java.util.List;
 
 @RestController
@@ -42,4 +43,8 @@ public class ConsultaController {
     public void excluir(@PathVariable Long id) {
         service.excluirPorId(id);
     }
+    @GetMapping("/paciente/{id}")
+    public List<ConsultaResponseDTO> listarPorPaciente(@PathVariable Long id) {
+        return service.listarPorPaciente(id);
+}
 }
