@@ -1,8 +1,8 @@
-# 🏥 Sistema de Gestão Clínica
+# Sistema de Gestão Clínica
 
 ---
 
-## 1. 📌 Descrição do Sistema
+## 1.Descrição do Sistema
 
 ### 🔹 Contexto do Problema
 
@@ -44,7 +44,7 @@ Foi desenvolvido um sistema de gestão clínica utilizando API REST, com o objet
 
 ---
 
-## 2. 🧩 Diagrama ER
+## 2.Diagrama ER
 
 ![Diagrama ER](images/diagrama-er.png)
 
@@ -60,7 +60,7 @@ A entidade **Consulta** atua como relacionamento entre Paciente e Médico.
 
 ---
 
-## 3. 📂 Estrutura de Pacotes
+## 3.Estrutura de Pacotes
 
 ![Estrutura de Pacotes](images/estrutura-pacotes.png)
 
@@ -74,7 +74,7 @@ A entidade **Consulta** atua como relacionamento entre Paciente e Médico.
 
 ---
 
-## 4. 🌐 Endpoints da API
+## 4.Endpoints da API
 
 ![Swagger Endpoints](images/swagger-endpoints.png)
 
@@ -111,7 +111,7 @@ A entidade **Consulta** atua como relacionamento entre Paciente e Médico.
 
 ---
 
-## 5. 📦 DTOs Utilizados
+## 5.DTOs Utilizados
 
 * Validação de dados de entrada
 * Segurança da aplicação
@@ -126,7 +126,7 @@ Validações utilizadas:
 
 ---
 
-## 6. ⚙️ Regras de Negócio
+## 6.Regras de Negócio
 
 * Não permite paciente sem nome
 * Não permite CPF duplicado
@@ -137,7 +137,7 @@ Validações utilizadas:
 
 ---
 
-## 7. 🧠 Desafio Implementado
+## 7.Desafio Implementado
 
 Listar consultas de um paciente com dados do médico utilizando **Spring Data JPA**.
 
@@ -152,7 +152,7 @@ JOIN medico m ON c.id_medico = m.id_medico;
 
 ---
 
-## 8. ▶️ Como Executar o Projeto
+## 8.Como Executar o Projeto
 
 ### 🔹 Pré-requisitos
 
@@ -177,7 +177,7 @@ CREATE DATABASE DB_GESTAO_CLINICA;
 
 ---
 
-## 9. 📌 Considerações Finais
+## 9.Considerações Finais
 
 O sistema substituiu o processo manual por uma solução automatizada, trazendo:
 
