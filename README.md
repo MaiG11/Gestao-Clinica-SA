@@ -174,10 +174,10 @@ CREATE DATABASE DB_GESTAO_CLINICA;
 
 2. Executar o projeto:
                                        
-Pré requisitos:                  Passos:
-Java17                           Clonar o projeto
-Maven                            Configurar o banco de dados
-MSQL                             Executar a aplicação   
+|Pré requisitos:|                  |Passos:|
+|Java17          |                 |Clonar o projeto|
+|Maven           |                 |Configurar o banco de dados|
+|MSQL            |                 |Executar a aplicação|   
 
 
 3. Acessar Swagger:
