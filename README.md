@@ -172,7 +172,13 @@ JOIN medico m ON c.id_medico = m.id_medico;
 CREATE DATABASE DB_GESTAO_CLINICA;
 ```
 
-2. Executar o projeto
+2. Executar o projeto:
+                                       
+Pré requisitos:                  Passos:
+Java17                           Clonar o projeto
+Maven                            Configurar o banco de dados
+MSQL                             Executar a aplicação   
+
 
 3. Acessar Swagger:
    http://localhost:8080/swagger-ui.html
