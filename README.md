@@ -4,7 +4,7 @@
 
 ## 1.Descrição do Sistema
 
-### 🔹 Contexto do Problema
+### 🔹Contexto do Problema
 
 A clínica utilizava anteriormente um sistema manual baseado em papel, no qual consultas eram registradas em agendas físicas.
 
@@ -20,7 +20,7 @@ Com o aumento da demanda de pacientes, tornou-se necessária a informatização 
 
 ---
 
-### 🔹 Solução Desenvolvida
+### 🔹Solução Desenvolvida
 
 Foi desenvolvido um sistema de gestão clínica utilizando API REST, com o objetivo de:
 
@@ -30,17 +30,25 @@ Foi desenvolvido um sistema de gestão clínica utilizando API REST, com o objet
 * Evitar conflitos de agendamento
 * Garantir integridade e organização dos dados
 
+O sistema centraliza todas as informações e automatiza processos que antes eram manuais.
 ---
 
-### 🔹 Tecnologias Utilizadas
+### 🔹Tecnologias Utilizadas
 
-* **Java 17**
+* **Java 17** 
+Utilizado como linguagem principal por ser robusta e amplamente utilizada no mercado.
 * **Spring Boot**
+Framework utilizado para facilitar a criação da API REST, reduzindo configurações e aumentando produtividade.
 * **Spring Data JPA**
+Responsável pela comunicação com o banco de dados, simplificando operações de persistência.
 * **MySQL**
+Banco de dados relacional utilizado para armazenamento permanente dos dados.
 * **H2 Database**
+Banco em memória utilizado para testes e desenvolvimento.
 * **Maven**
+Gerenciador de dependências utilizado para organizar o projeto.
 * **Swagger**
+Utilizado para documentação e testes das rotas da API.
 
 ---
 
@@ -48,7 +56,7 @@ Foi desenvolvido um sistema de gestão clínica utilizando API REST, com o objet
 
 ![Diagrama ER](images/diagrama-er.png)
 
-### 🔹 Descrição
+### 🔹Descrição
 
 O sistema é composto por três entidades principais:
 
@@ -58,19 +66,45 @@ O sistema é composto por três entidades principais:
 
 A entidade **Consulta** atua como relacionamento entre Paciente e Médico.
 
+### 🔹Relacionamneto
+    • Um paciente pode ter várias consultas
+    • Um médico pode atender várias consultas
+    • Cada consulta pertence a um único paciente e um único médico
+
+Representação:
+Paciente 1 → N Consulta N ← 1 Médico
+
+### 🔹Justificativa
+Essa modelagem foi adotada para permitir flexibilidade no agendamento e manter a integridade dos dados.
+
 ---
 
 ## 3.Estrutura de Pacotes
 
 ![Estrutura de Pacotes](images/estrutura-pacotes.png)
 
-### 🔹 Organização
+### 🔹Organização
 
-* Controller → requisições HTTP
-* Service → regras de negócio
-* Repository → acesso ao banco
-* Model → entidades
-* DTO → transferência de dados
+* **Controller**
+Responsável por receber requisições HTTP e retornar respostas.
+* **Service**
+Contém as regras de negócio do sistema.
+* **Repository**
+Responsável pelo acesso ao banco de dados.
+* **Model**
+Representa as entidades do sistema.
+* **DTO**
+Responsável pela transferência de dados e validações.
+
+
+### 🔹Justificativa
+
+Essa separação melhora:
+    • Organização do código
+    • Facilidade de manutenção
+    • Reutilização de componentes
+    • Clareza na responsabilidade de cada parte
+A arquitetura segue o padrão de camadas (Layered Architecture), promovendo baixo acoplamento e alta coesão.
 
 ---
 
@@ -78,7 +112,7 @@ A entidade **Consulta** atua como relacionamento entre Paciente e Médico.
 
 ![Swagger Endpoints](images/swagger-endpoints.png)
 
-### 🔹 Paciente
+### 🔹Paciente
 
 | Método | Rota            | Descrição          |
 | ------ | --------------- | ------------------ |
@@ -89,7 +123,7 @@ A entidade **Consulta** atua como relacionamento entre Paciente e Médico.
 
 ---
 
-### 🔹 Médico
+### 🔹Médico
 
 | Método | Rota          | Descrição        |
 | ------ | ------------- | ---------------- |
@@ -101,7 +135,7 @@ A entidade **Consulta** atua como relacionamento entre Paciente e Médico.
 
 ---
 
-### 🔹 Consulta
+### 🔹Consulta
 
 | Método | Rota            | Descrição          |
 | ------ | --------------- | ------------------ |
@@ -111,24 +145,41 @@ A entidade **Consulta** atua como relacionamento entre Paciente e Médico.
 | DELETE    | /consultas/{id} | Cancelar consulta |
 | GET | /consultas/paciente{id} | Lista todas consultas do paciente por id  |
 
+##  🔹Justificativa dos métodos HTTP
+    • GET → buscar dados
+    • POST → criar registros
+    • PUT → atualizar dados
+    • DELETE → remover registros
+
 ---
 
 ## 5.DTOs Utilizados
+
+## 🔹Objetivo
+
+Os DTOs foram utilizados para:
 
 * Validação de dados de entrada
 * Segurança da aplicação
 * Evita expor entidades diretamente
 
-Validações utilizadas:
+## 🔹Exemplo de validação utilizadas
 
-* `@NotBlank`
-* `@NotNull`
-* `@Size`
-* `@Email`
+* `@NotBlank` → campos obrigatórios
+* `@NotNull`  → não permite valores nulos
+* `@Size` → limita tamanho
+* `@Email` → valida formato
+
+## 🔹Justificativa
+
+Alguns campos não são retornados por segurança ou por não serem necessários na resposta.
+
 
 ---
 
 ## 6.Regras de Negócio
+
+## 🔹Regras implementadas
 
 * Não permite paciente sem nome
 * Não permite CPF duplicado
@@ -137,13 +188,44 @@ Validações utilizadas:
 * Não permite conflito de horário
 * Campos obrigatórios devem ser preenchidos
 
+## 🔹Explicação
+
+Essas regras garantem:
+    • Integridade dos dados
+    • Consistência do sistema
+    • Evitar erros de agendamento
+
+
 ---
 
 ## 7.Desafio Implementado
 
-Listar consultas de um paciente com dados do médico utilizando **Spring Data JPA**.
+## 🔹Objetivo do Desafio
 
-Exemplo conceitual SQL:
+O desafio proposto consistia em listar todas as consultas de um paciente específico, incluindo os dados do médico relacionado.
+
+## 🔹Implementação no Sistema
+
+No sistema desenvolvido, essa funcionalidade não foi implementada com SQL direto, pois foi utilizada a tecnologia Spring Data JPA, que realiza automaticamente as associações entre as entidades.
+
+Isso foi possível devido ao mapeamento realizado na entidade Consulta, conforme exemplo:
+
+@ManyToOne
+@JoinColumn(name = "id_paciente")
+private Paciente paciente;
+
+@ManyToOne
+@JoinColumn(name = "id_medico")
+private Medico medico;
+Esses relacionamentos permitem que o sistema recupere, automaticamente, os dados do paciente e do médico vinculados a cada consulta.
+
+## 🔹Funcionamento
+
+Ao realizar uma busca de consultas (por exemplo, utilizando um método como findAll() no repositório), o JPA é responsável por montar internamente as junções (JOINs) entre as tabelas, retornando os dados já relacionados.
+
+## 🔹Representação em SQL (Conceitual)
+
+Embora não tenha sido implementado diretamente no código, o funcionamento da consulta pode ser representado pela seguinte instrução SQL:
 
 ```sql
 SELECT c.id_consulta, p.nome, m.nome
@@ -151,20 +233,26 @@ FROM consulta c
 JOIN paciente p ON c.id_paciente = p.id_paciente
 JOIN medico m ON c.id_medico = m.id_medico;
 ```
+## 🔹Explicação Técnica
 
+A consulta acima utiliza a operação JOIN para relacionar as tabelas:
+    • consulta
+    • paciente
+    • medico
+
+Permitindo a recuperação de dados completos em uma única operação.
+No sistema desenvolvido, essa lógica é abstraída pelo JPA, o que elimina a necessidade de escrever SQL manual, mantendo o código mais limpo e organizado.
+
+## 🔹Justificativa da Abordagem
+
+A utilização do JPA foi escolhida porque:
+    • Reduz a complexidade do código
+    • Evita erros em consultas SQL manuais
+    • Facilita a manutenção do sistema
+    • Permite trabalhar com orientação a objetos
 ---
 
 ## 8.Como Executar o Projeto
-
-### 🔹 Pré-requisitos
-
-* Java 17
-* Maven
-* MySQL
-
----
-
-### 🔹 Passos
 
 1. Criar banco:
 
@@ -188,11 +276,14 @@ CREATE DATABASE DB_GESTAO_CLINICA;
 
 ## 9.Considerações Finais
 
-O sistema substituiu o processo manual por uma solução automatizada, trazendo:
+O sistema desenvolvido resolveu o problema inicial da clínica, substituindo um processo manual por uma solução automatizada.
+
+Com isso, foi possível:
 
 * Melhor organização
 * Redução de erros
 * Maior eficiência
 * Controle de dados
 
+A arquitetura adotada permite evolução futura do sistema.
 ---
