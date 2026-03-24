@@ -84,7 +84,7 @@ A entidade **Consulta** atua como relacionamento entre Paciente e Médico.
 | ------ | --------------- | ------------------ |
 | GET    | /pacientes      | Listar pacientes   |
 | POST   | /pacientes      | Cadastrar paciente |
-| PUT    | /pacientes/{id} | Atualizar paciente |
+| GET    | /pacientes/{id} | Listar paciente id |
 | DELETE | /pacientes/{id} | Remover paciente   |
 
 ---
@@ -95,8 +95,9 @@ A entidade **Consulta** atua como relacionamento entre Paciente e Médico.
 | ------ | ------------- | ---------------- |
 | GET    | /medicos      | Listar médicos   |
 | POST   | /medicos      | Cadastrar médico |
-| PUT    | /medicos/{id} | Atualizar médico |
+| GET    | /medicos/{id} | Listar médico |
 | DELETE | /medicos/{id} | Remover médico   |
+| GET    | /medicos/especialidade{especialidade} | Lista por especialidade|
 
 ---
 
@@ -106,8 +107,9 @@ A entidade **Consulta** atua como relacionamento entre Paciente e Médico.
 | ------ | --------------- | ------------------ |
 | GET    | /consultas      | Listar consultas   |
 | POST   | /consultas      | Agendar consulta   |
-| PUT    | /consultas/{id} | Atualizar consulta |
-| DELETE | /consultas/{id} | Cancelar consulta  |
+| GET    | /consultas/{id} | Listar consultas|
+| DELETE    | /consultas/{id} | Cancelar consulta |
+| GET | /consultas/paciente{id} | Lista todas consultas do paciente por id  |
 
 ---
 
