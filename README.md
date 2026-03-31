@@ -148,7 +148,6 @@ A arquitetura segue o padrão de camadas (Layered Architecture), promovendo baix
 ##  🔹Justificativa dos métodos HTTP
     • GET → buscar dados
     • POST → criar registros
-    • PUT → atualizar dados
     • DELETE → remover registros
 
 ---
